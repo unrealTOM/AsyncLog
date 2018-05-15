@@ -1,6 +1,6 @@
 function setTargetObjDir(outDir)
-	for _, cfg in ipairs(configurations()) do
-		for _, plat in ipairs(platforms()) do
+	for _, cfg in ipairs("%{cfg.buildcfg}") do
+		for _, plat in ipairs("%{cfg.platform}") do
 			local action = _ACTION or ""
 			
 			local prj = project()
@@ -44,20 +44,20 @@ function linkLib(libBaseName)
 	end
 end
 
-solution "test"
+workspace "test"
 	configurations { "debug", "release" }
 	platforms { "x32", "x64" }
 
 	location ("./" .. (_ACTION or ""))
 	language "C#"
-	
+
 	configuration "debug"
 		defines { "DEBUG" }
-		flags { "Symbols" }
+		symbols "On"
 
 	configuration "release"
 		defines { "NDEBUG" }
-		flags { "Optimize" }
+		optimize "On"
 
 	configuration "vs*"
 		defines { "_CRT_SECURE_NO_WARNINGS" }
@@ -85,7 +85,7 @@ solution "test"
 		
 		setTargetObjDir("../bin")
 
-solution "example"
+workspace "example"
 	configurations { "debug", "release" }
 	platforms { "x32", "x64" }
 	location ("./" .. (_ACTION or ""))
@@ -93,11 +93,12 @@ solution "example"
 
 	configuration "debug"
 		defines { "DEBUG" }
-		flags { "Symbols" }
+		symbols "On"
 
 	configuration "release"
 		defines { "NDEBUG" }
-		flags { "Optimize", "EnableSSE2" }
+		optimize "On"
+		vectorextensions "SSE2"
 
 	configuration "vs*"
 		defines { "_CRT_SECURE_NO_WARNINGS" }
